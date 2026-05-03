@@ -2,17 +2,17 @@
 # Statistics::Histogram
 
 # 20260417
-# 0.1.1
+# 0.2.0
 
 # Description: Will produce a histogram from an array of continuous numeric values, sorting them into range-based frequency buckets. Bin width is calculated automatically using the square root method by default, or can be specified manually. Each Bin instance tracks the count of values that fell into its interval.
 
-# Changes since 0.0:
+# Changes since 0.1:
 # -/0:
-# 1. + Statistics::Histogram::Bin
-# 2. ~ allocate_values: creates Bin instances instead of hash entries
-# 0/1:
-# 3. ~ initialize: extracted determine_bin_width from one-liner
-# 4. ~ compute_boundaries renamed to calculate_boundaries
+# 1. ~ Bin: count-tracking via increment instead of values-storing via
+# 2. ~ Bin: attr_reader :interval instead of :range
+# 3. + Bin#empty? checks @count == 0 instead of @values.empty?
+# 4. + determine_bin_width: zero-range guard
+# 5. + index_for_value extracted from allocate_values
 
 module Statistics
   class Histogram
@@ -30,36 +30,36 @@ module Statistics
       end
 
       def self.square_root_width(values)
-        data_range(values) * values.size ** (-1.0 / 2)
+        data_range(values) / Math.sqrt(values.size)
       end
 
       def self.square_root_count(values)
         Math.sqrt(values.size).ceil
       end
 
-      attr_reader :range, :values
+      attr_reader :interval
 
-      def <<(value)
-        @values << value
+      def increment
+        @count += 1
       end
 
       def count
-        @values.size
+        @count
       end
 
       def width
-        @range.end - @range.begin
+        @interval.end - @interval.begin
       end
 
       def empty?
-        @values.empty?
+        @count == 0
       end
 
       private
 
-      def initialize(range)
-        @range = range
-        @values = []
+      def initialize(interval)
+        @interval = interval
+        @count = 0
       end
     end
 
@@ -77,7 +77,7 @@ module Statistics
       max_count = @bins.map(&:count).max
       @bins.map do |bin|
         bar = '*' * ((bin.count.to_f / max_count) * 40).round
-        format('%8.2f...%-8.2f | %3d | %s', bin.range.begin, bin.range.end, bin.count, bar)
+        format('%8.2f...%-8.2f | %3d | %s', bin.interval.begin, bin.interval.end, bin.count, bar)
       end.join("\n")
     end
 
@@ -96,6 +96,8 @@ module Statistics
         bin_width
       elsif bin_count
         Bin.data_range(@values) / bin_count.to_f
+      elsif Bin.data_range(@values) == 0
+        1.0
       else
         Bin.width(@values, method: method)
       end
@@ -107,13 +109,17 @@ module Statistics
 
     def allocate_values
       bins = @boundaries.each_cons(2).map{|lower, upper| Bin.new(lower...upper)}
-      min = @boundaries.first
-      @values.each do |v|
-        i = ((v - min) / @bin_width).floor
-        i = bins.size - 1 if i >= bins.size
-        bins[i] << v
+      bottom_boundary = @boundaries.first
+      @values.each do |value|
+        i = index_for_value(value, bins.size, bottom_boundary)
+        bins[i].increment
       end
       bins
+    end
+
+    def index_for_value(value, bin_count, bottom_boundary)
+      i = ((value - bottom_boundary) / @bin_width).floor
+      i >= bin_count ? bin_count - 1 : i
     end
   end
 end
