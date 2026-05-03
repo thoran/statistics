@@ -1,5 +1,0 @@
-BinWidth.new(areas)                                  # square root (default)
-BinWidth.new(areas, method: :cube_root)              # cube root
-BinWidth.new(areas, method: :freedman_diaconis)      # robust to outliers
-BinWidth.new(areas, method: :scott)                  # assumes normality
-BinWidth.new(areas, method: :tuneable_root, factor: 1.5)  # dial it yourself
