@@ -2,20 +2,68 @@
 # Statistics::Histogram
 
 # 20260417
-# 0.0.0
+# 0.1.0
 
-# Description: Will produce a histogram from an array of continuous numeric values, sorting them into range-based frequency buckets. Bin width is calculated automatically using the square root method by default, or can be specified manually.
+# Description: Will produce a histogram from an array of continuous numeric values, sorting them into range-based frequency buckets. Bin width is calculated automatically using the square root method by default, or can be specified manually. Each Bin instance tracks the count of values that fell into its interval.
 
-# Changes:
+# Changes since 0.0:
 # -/0:
-# 1. + Statistics::Histogram
+# 1. + Statistics::Histogram::Bin
+# 2. ~ allocate_values: creates Bin instances instead of hash entries
 
 module Statistics
   class Histogram
+    class Bin
+      def self.width(values, method: :square_root)
+        send("#{method}_width", values)
+      end
+
+      def self.count(values, method: :square_root)
+        send("#{method}_count", values)
+      end
+
+      def self.data_range(values)
+        values.last - values.first
+      end
+
+      def self.square_root_width(values)
+        data_range(values) * values.size ** (-1.0 / 2)
+      end
+
+      def self.square_root_count(values)
+        Math.sqrt(values.size).ceil
+      end
+
+      attr_reader :range, :values
+
+      def <<(value)
+        @values << value
+      end
+
+      def count
+        @values.size
+      end
+
+      def width
+        @range.end - @range.begin
+      end
+
+      def empty?
+        @values.empty?
+      end
+
+      private
+
+      def initialize(range)
+        @range = range
+        @values = []
+      end
+    end
+
     attr_reader :bins, :boundaries
 
     def mode
-      @bins.max_by{|_interval, count| count}
+      @bins.max_by(&:count)
     end
 
     def bin_count
@@ -23,57 +71,36 @@ module Statistics
     end
 
     def to_s
-      max_count = @bins.values.max
-      @bins.map do |interval, count|
-        bar = '*' * ((count.to_f / max_count) * 40).round
-        format('%8.2f...%-8.2f | %3d | %s', interval.begin, interval.end, count, bar)
+      max_count = @bins.map(&:count).max
+      @bins.map do |bin|
+        bar = '*' * ((bin.count.to_f / max_count) * 40).round
+        format('%8.2f...%-8.2f | %3d | %s', bin.range.begin, bin.range.end, bin.count, bar)
       end.join("\n")
     end
 
     private
 
-    def initialize(values, bin_width: nil, bin_count: nil)
+    def initialize(values, bin_width: nil, bin_count: nil, method: :square_root)
       raise ArgumentError, 'Values must not be empty' if values.empty?
       @values = values.map(&:to_f).sort
-      @bin_width = determine_bin_width(bin_width, bin_count)
-      @boundaries = calculate_boundaries
+      @bin_width = bin_width || bin_count && (Bin.data_range(@values) / bin_count.to_f) || Bin.width(@values, method: method)
+      @boundaries = compute_boundaries
       @bins = allocate_values
     end
 
-    def determine_bin_width(bin_width, bin_count)
-      if bin_width
-        bin_width
-      elsif bin_count
-        data_range / bin_count.to_f
-      elsif data_range == 0
-        1.0
-      else
-        data_range / Math.sqrt(@values.size)
-      end
-    end
-
-    def data_range
-      @values.last - @values.first
-    end
-
-    def calculate_boundaries
+    def compute_boundaries
       @values.first.step(to: @values.last + @bin_width, by: @bin_width).to_a
     end
 
     def allocate_values
-      intervals = @boundaries.each_cons(2).map{|lower, upper| lower...upper}
-      result = intervals.map{|interval| [interval, 0]}.to_h
-      bottom_boundary = @boundaries.first
-      @values.each do |value|
-        i = index_for_value(value, intervals.size, bottom_boundary)
-        result[intervals[i]] += 1
+      bins = @boundaries.each_cons(2).map{|lower, upper| Bin.new(lower...upper)}
+      min = @boundaries.first
+      @values.each do |v|
+        i = ((v - min) / @bin_width).floor
+        i = bins.size - 1 if i >= bins.size
+        bins[i] << v
       end
-      result
-    end
-
-    def index_for_value(value, bin_count, bottom_boundary)
-      i = ((value - bottom_boundary) / @bin_width).floor
-      i >= bin_count ? bin_count - 1 : i
+      bins
     end
   end
 end
