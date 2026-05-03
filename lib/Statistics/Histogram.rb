@@ -2,7 +2,7 @@
 # Statistics::Histogram
 
 # 20260417
-# 0.1.0
+# 0.1.1
 
 # Description: Will produce a histogram from an array of continuous numeric values, sorting them into range-based frequency buckets. Bin width is calculated automatically using the square root method by default, or can be specified manually. Each Bin instance tracks the count of values that fell into its interval.
 
@@ -10,6 +10,9 @@
 # -/0:
 # 1. + Statistics::Histogram::Bin
 # 2. ~ allocate_values: creates Bin instances instead of hash entries
+# 0/1:
+# 3. ~ initialize: extracted determine_bin_width from one-liner
+# 4. ~ compute_boundaries renamed to calculate_boundaries
 
 module Statistics
   class Histogram
@@ -83,12 +86,22 @@ module Statistics
     def initialize(values, bin_width: nil, bin_count: nil, method: :square_root)
       raise ArgumentError, 'Values must not be empty' if values.empty?
       @values = values.map(&:to_f).sort
-      @bin_width = bin_width || bin_count && (Bin.data_range(@values) / bin_count.to_f) || Bin.width(@values, method: method)
-      @boundaries = compute_boundaries
+      @bin_width = determine_bin_width(bin_width, bin_count, method)
+      @boundaries = calculate_boundaries
       @bins = allocate_values
     end
 
-    def compute_boundaries
+    def determine_bin_width(bin_width, bin_count, method)
+      if bin_width
+        bin_width
+      elsif bin_count
+        Bin.data_range(@values) / bin_count.to_f
+      else
+        Bin.width(@values, method: method)
+      end
+    end
+
+    def calculate_boundaries
       @values.first.step(to: @values.last + @bin_width, by: @bin_width).to_a
     end
 
