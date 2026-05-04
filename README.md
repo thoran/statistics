@@ -68,11 +68,37 @@ h.bins.first.width     # => 2.57
 h.bins.first.empty?    # => false
 ```
 
+### Percentile
+
+These methods employ linear interpolation. See Hyndman and Fan method 7.
+
+```ruby
+require 'statistics.rb'
+
+values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+Statistics::Percentile.of(values, 75)   # => 7.75
+Statistics::Percentile.q25(values)      # => 3.25
+Statistics::Percentile.q75(values)      # => 7.75
+```
+
+### Standard Deviation
+
+```ruby
+Statistics::StandardDeviation.of(values)                # => population (default)
+Statistics::StandardDeviation.of(values, sample: true)  # => sample (Bessel's correction)
+```
+
+### Interquartile Range
+
+```ruby
+Statistics::IQR.of(values)  # => 4.5
+```
+
 ## Roadmap
 
 - Optional per-bin value storage
 - Additional bin width methods (Freedman-Diaconis, Scott, Sturges, cube root, tuneable root)
-- Composable statistical primitives (Percentile, StandardDeviation, IQR)
 - Aligned/neat bin boundaries
 
 ## License
