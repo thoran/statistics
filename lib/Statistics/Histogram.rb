@@ -1,7 +1,7 @@
 # Statistics/Histogram.rb
 # Statistics::Histogram
 
-require_relative './Histogram/Bin'
+require_relative './Bin'
 
 module Statistics
   class Histogram

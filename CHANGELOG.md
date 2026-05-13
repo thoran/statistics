@@ -1,7 +1,18 @@
 # CHANGELOG
 
+## [0.6.1] - 20260513
+## Statistics::Histogram::Bin --> Statistics::Bin
+
+1. lib/Statistics/Histogram/Bin.rb --> lib/Statistics/Bin.rb
+2. test/Statistics/Histogram/Bin\_test.rb --> test/Statistics/Bin\_test.rb
+3. ~ lib/Statistics/Histogram.rb: /require\_relative './Histogram/Bin'/require\_relative './Bin'/
+4. ~ lib/statistics.rb: + require\_relative './Statistics/Bin'
+5. ~ .gitignore: Add standard contents.
+6. ~ README.md: + Contributions section
+7. ~ lib/Statistics/VERSION.rb: /0.6.0/0.6.1/
+
 ## [0.6.0] - 20260504
-## Percentile, StandardDeviation, IQR
+## + Percentile, StandardDeviation, IQR
 
 1. + lib/Statistics/Percentile.rb
 2. + lib/Statistics/StandardDeviation.rb
@@ -15,7 +26,7 @@
 
 
 ## [0.5.0] - 20260503
-## Bin.bin\_for\_value, Bin split, gem scaffolding
+## + Bin.bin\_for\_value, Bin split, gem scaffolding.
 
 1. + Bin.bin\_for\_value (wraps index\_for\_value, now private)
 2. ~ Histogram#allocate\_values: Use Bin.bin\_for\_value
@@ -32,7 +43,7 @@
 
 
 ## [0.4.0] - 20260502
-## Bin instances and consolidated class methods
+## + Bin instances; consolidated class methods.
 
 1. + Bin instances (count-tracking via increment, attr\_reader :interval)
 2. ~ Bin.width: handles bin\_width, bin\_count, zero-range, and method selection
@@ -44,7 +55,7 @@
 
 
 ## [0.3.0] - 20260417
-## Hash-based bins, Bin as class-methods-only
+## Hash-based bins; Bin as class-methods-only.
 
 1. + Bin.boundaries class method
 2. ~ initialize: delegates to Bin.width and Bin.boundaries
@@ -55,7 +66,7 @@
 
 
 ## [0.2.0] - 20260417
-## Count-tracking, interval, zero-range guard
+## Swap storing values per bin for counting per bin; interval; zero-range guard.
 
 1. ~ Bin: count-tracking via increment instead of storing values in array
 2. ~ Bin: attr\_reader :interval instead of :range
@@ -65,42 +76,42 @@
 
 
 ## [0.1.1] - 20260417
-## Extract determine\_bin\_width
+## + Statistics::Histogram#determine\_bin\_width
 
 1. ~ initialize: extracted determine\_bin\_width from one-liner
 2. /compute\_boundaries/calculate\_boundaries/
 
 
 ## [0.1.0] - 20260417
-## Bin class
+## + Statistics::Histogram::Bin
 
 1. + Statistics::Histogram::Bin
 2. ~ allocate\_values: creates Bin instances instead of hash entries
 
 
 ## [0.0.0] - 20260417
-## Statistics::Histogram
+## + Statistics::Histogram
 
 1. + lib/Statistics/Histogram.rb
 2. - lib/BinWidth.rb
 
 
-## 20260416
-## BinWidth 0.1.0 to 0.2.0: Reintroduce all named strategies
+## [pre-0.0.0] - 20260416
+## ~ BinWidth: Reintroduce binning strategies; extra guard clauses.
 
-1. /0.1.0/0.2.0/
-2. Reintroduce all named strategies.
-
-
-## 20260416
-## BinWidth 0.0.0 to 0.1.0: Tuneable root generalisation
-
-1. /0.0.0/0.1.0/
-2. + tuneable\_root as the general form
-3. ~ square\_root rewritten as range * n^(-1/2) form
+1. Reintroduce all named strategies.
+2. /0.1.0/0.2.0/
 
 
-## 20260416
-## BinWidth 0.0.0
+## [pre-0.0.0] - 20260416
+## + BinWidth#tuneable_root
+
+1. + tuneable\_root as the general form
+2. ~ square\_root rewritten as range * n^(-1/2) form
+3. /0.0.0/0.1.0/
+
+
+## [pre-0.0.0] - 20260416
+## + BinWidth
 
 1. + lib/BinWidth.rb
