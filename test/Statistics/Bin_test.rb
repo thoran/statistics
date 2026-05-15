@@ -30,6 +30,97 @@ describe Statistics::Bin do
       width = Statistics::Bin.width(values)
       _(width).must_equal 1.0
     end
+
+    it 'calculates cube root width' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :cube_root)
+      expected = (values.last - values.first) * values.size ** (-1.0 / 3)
+      _(width).must_be_close_to expected
+    end
+
+    it 'calculates tuneable root width with custom factor' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :tuneable_root, factor: 4.0)
+      expected = (values.last - values.first) * values.size ** (-1.0 / 4)
+      _(width).must_be_close_to expected
+    end
+
+    it 'tuneable root with default factor matches square root width' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :tuneable_root)
+      expected = Statistics::Bin.width(values, method: :square_root)
+      _(width).must_be_close_to expected
+    end
+
+    it 'calculates Freedman-Diaconis width' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :freedman_diaconis)
+      expected = 2.0 * Statistics::IQR.of(values) * values.size ** (-1.0 / 3)
+      _(width).must_be_close_to expected
+    end
+
+    it 'calculates Scott width' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :scott)
+      expected = 3.49 * Statistics::StandardDeviation.of(values) * values.size ** (-1.0 / 3)
+      _(width).must_be_close_to expected
+    end
+
+    it 'calculates Sturges width' do
+      values = (1..100).to_a.map(&:to_f)
+      width = Statistics::Bin.width(values, method: :sturges)
+      expected_count = Math.log2(values.size).ceil + 1
+      expected = (values.last - values.first) / expected_count
+      _(width).must_be_close_to expected
+    end
+
+    it 'raises for empty values' do
+      _{Statistics::Bin.width([])}.must_raise ArgumentError
+    end
+
+    it 'raises for unknown method' do
+      _{Statistics::Bin.width([1.0, 2.0], method: :bogus)}.must_raise ArgumentError
+    end
+
+    it 'raises for non-positive factor' do
+      _{Statistics::Bin.width([1.0, 2.0], factor: 0)}.must_raise ArgumentError
+    end
+  end
+
+  describe '.count' do
+    it 'calculates square root count by default' do
+      values = (1..100).to_a.map(&:to_f)
+      _(Statistics::Bin.count(values)).must_equal Math.sqrt(values.size).ceil
+    end
+
+    it 'calculates cube root count' do
+      values = (1..100).to_a.map(&:to_f)
+      _(Statistics::Bin.count(values, method: :cube_root)).must_equal (values.size ** (1.0 / 3)).ceil
+    end
+
+    it 'calculates tuneable root count with custom factor' do
+      values = (1..100).to_a.map(&:to_f)
+      _(Statistics::Bin.count(values, method: :tuneable_root, factor: 4.0)).must_equal (values.size ** (1.0 / 4)).ceil
+    end
+
+    it 'calculates Freedman-Diaconis count' do
+      values = (1..100).to_a.map(&:to_f)
+      expected_width = 2.0 * Statistics::IQR.of(values) * values.size ** (-1.0 / 3)
+      expected = ((values.last - values.first) / expected_width).ceil
+      _(Statistics::Bin.count(values, method: :freedman_diaconis)).must_equal expected
+    end
+
+    it 'calculates Scott count' do
+      values = (1..100).to_a.map(&:to_f)
+      expected_width = 3.49 * Statistics::StandardDeviation.of(values) * values.size ** (-1.0 / 3)
+      expected = ((values.last - values.first) / expected_width).ceil
+      _(Statistics::Bin.count(values, method: :scott)).must_equal expected
+    end
+
+    it 'calculates Sturges count' do
+      values = (1..100).to_a.map(&:to_f)
+      _(Statistics::Bin.count(values, method: :sturges)).must_equal Math.log2(values.size).ceil + 1
+    end
   end
 
   describe '.boundaries' do

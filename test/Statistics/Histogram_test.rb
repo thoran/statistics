@@ -136,6 +136,16 @@ describe Statistics::Histogram do
     end
   end
 
+  describe 'with method: :tuneable_root' do
+    it 'passes factor through to Bin.width' do
+      values = (1..100).to_a
+      h_default = Statistics::Histogram.new(values, method: :tuneable_root)
+      h_custom = Statistics::Histogram.new(values, method: :tuneable_root, factor: 4.0)
+      _(h_default.bins.first.width).must_be_close_to Statistics::Bin.width(values.map(&:to_f), method: :tuneable_root)
+      _(h_custom.bins.first.width).must_be_close_to Statistics::Bin.width(values.map(&:to_f), method: :tuneable_root, factor: 4.0)
+    end
+  end
+
   describe 'with float values' do
     it 'handles floats correctly' do
       values = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9]

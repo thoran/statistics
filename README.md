@@ -42,6 +42,23 @@ Output:
 
 By default, bin width is calculated using the square root rule: `data_range / sqrt(n)`.
 
+Other strategies are available via the `method:` option:
+
+```ruby
+h = Statistics::Histogram.new(values, method: :square_root)       # default
+h = Statistics::Histogram.new(values, method: :cube_root)
+h = Statistics::Histogram.new(values, method: :freedman_diaconis)
+h = Statistics::Histogram.new(values, method: :scott)
+h = Statistics::Histogram.new(values, method: :sturges)
+```
+
+The `tuneable_root` method takes a `factor` (default `2.0`, equivalent to `square_root`):
+
+```ruby
+h = Statistics::Histogram.new(values, method: :tuneable_root, factor: 4.0)
+Statistics::Bin.width(values, method: :tuneable_root, factor: 4.0)
+```
+
 #### Manual bin width
 
 ```ruby
@@ -98,7 +115,6 @@ Statistics::IQR.of(values)  # => 4.5
 ## Roadmap
 
 - Optional per-bin value storage
-- Additional bin width methods (Freedman-Diaconis, Scott, Sturges, cube root, tuneable root)
 - Aligned/neat bin boundaries
 
 ## Contributing

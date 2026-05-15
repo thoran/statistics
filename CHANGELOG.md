@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [0.7.0] - 20260515
+## + cube\_root, freedman\_diaconis, scott, tuneable\_root, sturges bin width methods
+
+1. + Bin::METHODS, Bin::DEFAULT\_METHOD, Bin::DEFAULT\_FACTOR
+2. + Bin.cube\_root\_width, Bin.cube\_root\_count
+3. + Bin.tuneable\_root\_width, Bin.tuneable\_root\_count
+4. + Bin.freedman\_diaconis\_width, Bin.freedman\_diaconis\_count
+5. + Bin.scott\_width, Bin.scott\_count
+6. + Bin.sturges\_width, Bin.sturges\_count
+7. ~ Bin.width, Bin.count, Bin.boundaries: + factor: keyword argument (parameter of :tuneable\_root, defaults to DEFAULT\_FACTOR)
+8. + Bin.validate! (empty values, unknown method, non-positive factor)
+9. ~ Bin.data\_range: now private
+10. ~ Bin.rb: + require\_relative for IQR and StandardDeviation
+11. ~ Histogram#initialize: + factor: keyword argument, forwarded to Bin.width
+12. ~ test/Statistics/Bin\_test.rb: cases for new strategies, .count parity, validation
+13. + test/Statistics/Histogram\_test.rb: factor passthrough case
+14. ~ README.md: Document strategies; remove from Roadmap.
+15. ~ lib/Statistics/VERSION.rb: /0.6.1/0.7.0/
+
+
 ## [0.6.1] - 20260513
 ## Statistics::Histogram::Bin --> Statistics::Bin
 
@@ -10,6 +30,7 @@
 5. ~ .gitignore: Add standard contents.
 6. ~ README.md: + Contributions section
 7. ~ lib/Statistics/VERSION.rb: /0.6.0/0.6.1/
+
 
 ## [0.6.0] - 20260504
 ## + Percentile, StandardDeviation, IQR
