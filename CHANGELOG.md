@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [0.10.0] - 20260923
+## + LinearRegression
+
+1. + lib/Statistics/LinearRegression.rb: slope, intercept, predict, residuals, r\_squared, standard\_error, to\_s
+2. slope is Covariance.of(xs, ys) / Variance.of(xs); r\_squared is 1 - RSS/TSS, which is 1.0 for constant values of y
+3. .new raises for sets of values of unequal size, for fewer than two points, and for identical values of x
+4. standard\_error is nil for fewer than three points, there being no degrees of freedom left
+5. ~ lib/statistics.rb: + require\_relative for LinearRegression
+6. + test/Statistics/LinearRegression\_test.rb
+7. ~ statistics.rb.gemspec: + LinearRegression in the description
+8. ~ README.md: Document LinearRegression.
+9. ~ lib/Statistics/VERSION.rb: /0.9.0/0.10.0/
+
+
 ## [0.9.0] - 20260923
 ## + Covariance, Correlation
 

@@ -143,6 +143,26 @@ Pearson's product-moment correlation coefficient:
 Statistics::Correlation.of(xs, ys)  # => 0.7745966692414833
 ```
 
+### Linear Regression
+
+An ordinary least squares fit of `y = slope * x + intercept`:
+
+```ruby
+lr = Statistics::LinearRegression.new(xs, ys)
+
+lr.slope           # => 0.6
+lr.intercept       # => 2.2
+lr.predict(6)      # => 5.8
+lr.r_squared       # => 0.6, modulo floating point error
+lr.residuals       # => [-0.8, 0.6, 1.0, -0.6, -0.2], modulo floating point error
+lr.standard_error  # => 0.8944271909999159, nil for fewer than three points
+puts lr            # => y = 0.6000x + 2.2000 (r² = 0.6000)
+```
+
+`.new` raises an `ArgumentError` when the two sets of values differ in size, when there
+are fewer than two points, or when the values of x are all identical, which leaves the
+slope undefined.
+
 ## Roadmap
 
 - Optional per-bin value storage
