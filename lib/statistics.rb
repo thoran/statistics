@@ -1,6 +1,8 @@
 # statistics.rb
 
 require_relative './Statistics/Bin'
+require_relative './Statistics/Correlation'
+require_relative './Statistics/Covariance'
 require_relative './Statistics/Histogram'
 require_relative './Statistics/IQR'
 require_relative './Statistics/Mean'

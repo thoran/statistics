@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.9.0] - 20260923
+## + Covariance, Correlation
+
+1. + lib/Statistics/Covariance.rb (raises for sets of values of unequal size)
+2. + lib/Statistics/Correlation.rb (Pearson's r; raises when a set of values is constant)
+3. ~ lib/statistics.rb: + require\_relative for Covariance and Correlation
+4. + test/Statistics/Covariance\_test.rb
+5. + test/Statistics/Correlation\_test.rb
+6. ~ statistics.rb.gemspec: + Covariance and Correlation in the description
+7. ~ README.md: Document Covariance and Correlation.
+8. ~ lib/Statistics/VERSION.rb: /0.8.0/0.9.0/
+
+
 ## [0.8.0] - 20260923
 ## + Mean, Variance
 

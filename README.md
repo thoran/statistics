@@ -125,6 +125,24 @@ Statistics::StandardDeviation.of(values, sample: true)  # => sample (Bessel's co
 Statistics::IQR.of(values)  # => 4.5
 ```
 
+### Covariance
+
+```ruby
+xs = [1, 2, 3, 4, 5]
+ys = [2, 4, 5, 4, 5]
+
+Statistics::Covariance.of(xs, ys)                # => 1.2, population (default)
+Statistics::Covariance.of(xs, ys, sample: true)  # => 1.5, sample (Bessel's correction)
+```
+
+### Correlation
+
+Pearson's product-moment correlation coefficient:
+
+```ruby
+Statistics::Correlation.of(xs, ys)  # => 0.7745966692414833
+```
+
 ## Roadmap
 
 - Optional per-bin value storage
