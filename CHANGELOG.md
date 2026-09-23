@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [0.8.0] - 20260923
+## + Mean, Variance
+
+1. + lib/Statistics/Mean.rb
+2. + lib/Statistics/Variance.rb (population by default, sample: for Bessel's correction)
+3. ~ StandardDeviation.of: now Math.sqrt(Variance.of(values, sample: sample)), so the sum of squares lives in one place
+4. ~ lib/statistics.rb: + require\_relative for Mean and Variance
+5. + test/Statistics/Mean\_test.rb
+6. + test/Statistics/Variance\_test.rb
+7. ~ statistics.rb.gemspec: + Mean and Variance in the description
+8. ~ README.md: Document Mean and Variance.
+9. ~ lib/Statistics/VERSION.rb: /0.7.0/0.8.0/
+
+
 ## [0.7.0] - 20260515
 ## + cube\_root, freedman\_diaconis, scott, tuneable\_root, sturges bin width methods
 

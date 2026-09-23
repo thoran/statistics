@@ -1,16 +1,14 @@
 # Statistics/StandardDeviation.rb
 # Statistics::StandardDeviation
 
+require_relative './Variance'
+
 module Statistics
   module StandardDeviation
     module_function
 
     def of(values, sample: false)
-      floats = values.map(&:to_f)
-      mean = floats.sum / floats.size
-      denominator = sample ? floats.size - 1 : floats.size
-      variance = floats.map{|v| (v - mean) ** 2}.sum / denominator
-      Math.sqrt(variance)
+      Math.sqrt(Variance.of(values, sample: sample))
     end
   end
 end

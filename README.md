@@ -99,6 +99,19 @@ Statistics::Percentile.q25(values)      # => 3.25
 Statistics::Percentile.q75(values)      # => 7.75
 ```
 
+### Mean
+
+```ruby
+Statistics::Mean.of(values)  # => 5.5
+```
+
+### Variance
+
+```ruby
+Statistics::Variance.of(values)                # => population (default)
+Statistics::Variance.of(values, sample: true)  # => sample (Bessel's correction)
+```
+
 ### Standard Deviation
 
 ```ruby
