@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.version = Statistics::VERSION
 
   spec.summary = "A statistics library for Ruby."
-  spec.description = "A composable statistics library for Ruby. Histogram, Percentile, Mean, Variance, StandardDeviation, IQR, Covariance, Correlation, LinearRegression."
+  spec.description = "A composable statistics library for Ruby. Histogram, Percentile, Mean, Median, Variance, StandardDeviation, IQR, Covariance, Correlation, LinearRegression, and an opt-in Enumerable mixin."
 
   spec.author = 'thoran'
   spec.email = 'code@thoran.com'
