@@ -1,0 +1,190 @@
+# statistics/CHANGELOG
+
+## 20261015
+
+0.11.0: + Median; + Statistics::Enumerable mixin and the statistics-enumerable opt-in
+
+1. + lib/Statistics/Median.rb: Median.of, as Percentile.of(values, 50)
+2. + lib/Statistics/Enumerable.rb: the mixin: mean, median, variance, standard_deviation, percentile, q25, q75, iqr, covariance, correlation, linear_regression, histogram, each delegating to its module-function with self as the values
+3. + lib/statistics-enumerable.rb: the opt-in; requires the core and does Enumerable.include(Statistics::Enumerable)
+4. ~ Histogram#initialize: Coerce before the empty? guard, so that any Enumerable, Range included, may be passed.
+5. ~ Covariance.of: Coerce before the size guard, for the same reason.
+6. ~ lib/statistics.rb: + require_relative for Enumerable and Median
+7. + test/Statistics/Median_test.rb
+8. + test/Statistics/Enumerable_test.rb: the mixin, via a throwaway Enumerable class, and not via the patch; + a case which fails should an of-shaped operation module not be exposed by the mixin
+9. + test/statistics-enumerable_test.rb: the patch, in a subprocess, so that it cannot leak into the suite
+10. ~ README.md: + Two surfaces section (and the note that the patch, though not the mixin, wants Ruby 3.0); + Median section; /require 'statistics.rb'/require 'statistics'/
+11. CHANGELOG.md --> CHANGELOG
+12. ~ statistics.rb.gemspec: + Median and the Enumerable mixin in the description
+13. ~ lib/Statistics/VERSION.rb: /0.10.0/0.11.0/
+
+
+## 20260923
+
+0.10.0: + LinearRegression
+
+1. + lib/Statistics/LinearRegression.rb: slope, intercept, predict, residuals, r_squared, standard_error, to_s
+2. slope is Covariance.of(xs, ys) / Variance.of(xs); r_squared is 1 - RSS/TSS, which is 1.0 for constant values of y
+3. .new raises for sets of values of unequal size, for fewer than two points, and for identical values of x
+4. standard_error is nil for fewer than three points, there being no degrees of freedom left
+5. ~ lib/statistics.rb: + require_relative for LinearRegression
+6. + test/Statistics/LinearRegression_test.rb
+7. ~ statistics.rb.gemspec: + LinearRegression in the description
+8. ~ README.md: Document LinearRegression.
+9. ~ lib/Statistics/VERSION.rb: /0.9.0/0.10.0/
+
+0.9.0: + Covariance, Correlation
+
+1. + lib/Statistics/Covariance.rb (raises for sets of values of unequal size)
+2. + lib/Statistics/Correlation.rb (Pearson's r; raises when a set of values is constant)
+3. ~ lib/statistics.rb: + require_relative for Covariance and Correlation
+4. + test/Statistics/Covariance_test.rb
+5. + test/Statistics/Correlation_test.rb
+6. ~ statistics.rb.gemspec: + Covariance and Correlation in the description
+7. ~ README.md: Document Covariance and Correlation.
+8. ~ lib/Statistics/VERSION.rb: /0.8.0/0.9.0/
+
+0.8.0: + Mean, Variance
+
+1. + lib/Statistics/Mean.rb
+2. + lib/Statistics/Variance.rb (population by default, sample: for Bessel's correction)
+3. ~ StandardDeviation.of: now Math.sqrt(Variance.of(values, sample: sample)), so the sum of squares lives in one place
+4. ~ lib/statistics.rb: + require_relative for Mean and Variance
+5. + test/Statistics/Mean_test.rb
+6. + test/Statistics/Variance_test.rb
+7. ~ statistics.rb.gemspec: + Mean and Variance in the description
+8. ~ README.md: Document Mean and Variance.
+9. ~ lib/Statistics/VERSION.rb: /0.7.0/0.8.0/
+
+
+## 20260515
+
+0.7.0: + cube_root, freedman_diaconis, scott, tuneable_root, sturges bin width methods
+
+1. + Bin::METHODS, Bin::DEFAULT_METHOD, Bin::DEFAULT_FACTOR
+2. + Bin.cube_root_width, Bin.cube_root_count
+3. + Bin.tuneable_root_width, Bin.tuneable_root_count
+4. + Bin.freedman_diaconis_width, Bin.freedman_diaconis_count
+5. + Bin.scott_width, Bin.scott_count
+6. + Bin.sturges_width, Bin.sturges_count
+7. ~ Bin.width, Bin.count, Bin.boundaries: + factor: keyword argument (parameter of :tuneable_root, defaults to DEFAULT_FACTOR)
+8. + Bin.validate! (empty values, unknown method, non-positive factor)
+9. ~ Bin.data_range: now private
+10. ~ Bin.rb: + require_relative for IQR and StandardDeviation
+11. ~ Histogram#initialize: + factor: keyword argument, forwarded to Bin.width
+12. ~ test/Statistics/Bin_test.rb: cases for new strategies, .count parity, validation
+13. + test/Statistics/Histogram_test.rb: factor passthrough case
+14. ~ README.md: Document strategies; remove from Roadmap.
+15. ~ lib/Statistics/VERSION.rb: /0.6.1/0.7.0/
+
+
+## 20260513
+
+0.6.1: Statistics::Histogram::Bin --> Statistics::Bin
+
+1. lib/Statistics/Histogram/Bin.rb --> lib/Statistics/Bin.rb
+2. test/Statistics/Histogram/Bin_test.rb --> test/Statistics/Bin_test.rb
+3. ~ lib/Statistics/Histogram.rb: /require_relative './Histogram/Bin'/require_relative './Bin'/
+4. ~ lib/statistics.rb: + require_relative './Statistics/Bin'
+5. ~ .gitignore: Add standard contents.
+6. ~ README.md: + Contributions section
+7. ~ lib/Statistics/VERSION.rb: /0.6.0/0.6.1/
+
+
+## 20260504
+
+0.6.0: + Percentile, StandardDeviation, IQR
+
+1. + lib/Statistics/Percentile.rb
+2. + lib/Statistics/StandardDeviation.rb
+3. + lib/Statistics/IQR.rb
+4. + test/Statistics/Percentile_test.rb
+5. + test/Statistics/StandardDeviation_test.rb
+6. + test/Statistics/IQR_test.rb
+7. - Gemfile: As there are no dependencies it isn't doing anything!
+8. ~ statistics.rb.gemspec: dependencies=() also therefore not used.
+9. /CHANGELOG/CHANGELOG.md/
+
+
+## 20260503
+
+0.5.0: + Bin.bin_for_value, Bin split, gem scaffolding.
+
+1. + Bin.bin_for_value (wraps index_for_value, now private)
+2. ~ Histogram#allocate_values: Use Bin.bin_for_value
+3. ~ Bin split out to lib/Statistics/Histogram/Bin.rb
+4. + lib/statistics.rb
+5. + lib/Statistics/VERSION.rb
+6. + statistics.rb.gemspec
+7. + Gemfile
+8. + Rakefile
+9. + README.md
+10. + LICENSE
+11. + test/Statistics/Histogram_test.rb
+12. + test/Statistics/Histogram/Bin_test.rb
+
+
+## 20260502
+
+0.4.0: + Bin instances; consolidated class methods.
+
+1. + Bin instances (count-tracking via increment, attr_reader :interval)
+2. ~ Bin.width: handles bin_width, bin_count, zero-range, and method selection
+3. + Bin.boundaries (from 0.3.0)
+4. + Bin.index_for_value (was Histogram#index_for_value)
+5. + Bin.data_range
+6. ~ class << self for class methods with private boundary
+7. ~ attr_reader :count replaces hand-written method
+
+
+## 20260417
+
+0.3.0: Hash-based bins; Bin as class-methods-only.
+
+1. + Bin.boundaries class method
+2. ~ initialize: delegates to Bin.width and Bin.boundaries
+3. ~ Bin: hash-based bins (no Bin instances), Bin is class-methods-only
+4. - index_for_value (inlined back into allocate_values)
+5. - determine_bin_width (replaced by Bin.width delegation)
+6. - zero-range guard
+
+0.2.0: Swap storing values per bin for counting per bin; interval; zero-range guard.
+
+1. ~ Bin: count-tracking via increment instead of storing values in array
+2. ~ Bin: attr_reader :interval instead of :range
+3. + Bin#empty? checks @count == 0 instead of @values.empty?
+4. + determine_bin_width: zero-range guard
+5. + index_for_value extracted from allocate_values
+
+0.1.1: + Statistics::Histogram#determine_bin_width
+
+1. ~ initialize: extracted determine_bin_width from one-liner
+2. /compute_boundaries/calculate_boundaries/
+
+0.1.0: + Statistics::Histogram::Bin
+
+1. + Statistics::Histogram::Bin
+2. ~ allocate_values: creates Bin instances instead of hash entries
+
+0.0.0: + Statistics::Histogram
+
+1. + lib/Statistics/Histogram.rb
+2. - lib/BinWidth.rb
+
+
+## 20260416
+
+pre-0.0.0: ~ BinWidth: Reintroduce binning strategies; extra guard clauses.
+
+1. Reintroduce all named strategies.
+2. /0.1.0/0.2.0/
+
+pre-0.0.0: + BinWidth#tuneable_root
+
+1. + tuneable_root as the general form
+2. ~ square_root rewritten as range * n^(-1/2) form
+3. /0.0.0/0.1.0/
+
+pre-0.0.0: + BinWidth
+
+1. + lib/BinWidth.rb

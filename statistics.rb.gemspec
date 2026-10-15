@@ -11,26 +11,25 @@ Gem::Specification.new do |spec|
   spec.version = Statistics::VERSION
 
   spec.summary = "A statistics library for Ruby."
-  spec.description = "A composable statistics library for Ruby. Histogram, Percentile, Mean, Variance, StandardDeviation, IQR, Covariance, Correlation, LinearRegression."
+  spec.description = "A composable statistics library for Ruby. Histogram, Percentile, Mean, Median, Variance, StandardDeviation, IQR, Covariance, Correlation, LinearRegression, and an opt-in Enumerable mixin."
 
   spec.author = 'thoran'
   spec.email = 'code@thoran.com'
   spec.homepage = 'http://github.com/thoran/statistics'
   spec.license = 'MIT'
 
-  spec.required_ruby_version = '>= 2.7'
+  spec.required_ruby_version = '>= 3'
+  spec.require_paths = ['lib']
 
   spec.files = [
+    'statistics.rb.gemspec',
     Dir['lib/**/*.rb'],
     Dir['test/**/*.rb'],
-    'CHANGELOG.md',
+    'CHANGELOG',
     'LICENSE',
     'Rakefile',
     'README.md',
-    'statistics.rb.gemspec',
   ].flatten
-
-  spec.require_paths = ['lib']
 
   spec.development_dependencies = %w{
     rake

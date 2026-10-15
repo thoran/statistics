@@ -26,8 +26,8 @@ module Statistics
     private
 
     def initialize(values, bin_width: nil, bin_count: nil, method: :square_root, factor: nil)
-      raise ArgumentError, 'Values must not be empty' if values.empty?
       @values = values.map(&:to_f).sort
+      raise ArgumentError, 'Values must not be empty' if @values.empty?
       @bin_width = Bin.width(@values, bin_width: bin_width, bin_count: bin_count, method: method, factor: factor)
       @boundaries = Bin.boundaries(@values, bin_width: @bin_width)
       @bins = allocate_values

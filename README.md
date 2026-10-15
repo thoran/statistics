@@ -16,12 +16,62 @@ gem 'statistics.rb'
 
 ## Usage
 
+### Two surfaces
+
+Every operation is a module-function taking the values as its first argument. An
+opt-in file grafts the same operations onto `Enumerable` as methods:
+
+```ruby
+require 'statistics'             # the library: Statistics::Mean.of(values), nothing patched
+require 'statistics-enumerable'  # opt in: Enumerable acquires mean, median, variance,
+                                 # standard_deviation, percentile, q25, q75, iqr,
+                                 # covariance, correlation, linear_regression, histogram
+```
+
+The second requires the first itself, so it is a complete line and wants no
+`require 'statistics'` above it. Every `Array`, `Range`, `Set` and
+`Enumerable`-including class then has the methods:
+
+```ruby
+values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+values.mean                               # => 5.5
+values.median                             # => 5.5
+(1..10).percentile(75)                    # => 7.75
+values.standard_deviation(sample: true)   # => 3.0276503540974917
+values.histogram(bin_count: 5)            # => #<Statistics::Histogram ...>
+[1, 2, 3, 4, 5].correlation([2, 4, 5, 4, 5])  # => 0.7745966692414833
+```
+
+Each method delegates to the module-function with `self` as the values, so
+`values.mean` and `Statistics::Mean.of(values)` are the same call.
+
+The patch wants Ruby 3.0 or later, since that is where `include` into a module
+began propagating to the classes which already include it. The mixin itself,
+included directly into a class, has no such requirement.
+
+A program which would rather not patch core includes the mixin into a class of
+its own, which is all `statistics-enumerable` does, less the patch:
+
+```ruby
+require 'statistics'
+
+class Series
+  include Enumerable
+  include Statistics::Enumerable
+
+  def each(&block)
+    @values.each(&block)
+  end
+end
+```
+
 ### Histogram
 
 Create a histogram from an array of numeric values:
 
 ```ruby
-require 'statistics.rb'
+require 'statistics'
 
 values = [1.2, 3.4, 5.6, 7.8, 2.3, 4.5, 6.7, 8.9, 3.2, 5.4]
 
@@ -90,7 +140,7 @@ h.bins.first.empty?    # => false
 These methods employ linear interpolation. See Hyndman and Fan method 7.
 
 ```ruby
-require 'statistics.rb'
+require 'statistics'
 
 values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -103,6 +153,15 @@ Statistics::Percentile.q75(values)      # => 7.75
 
 ```ruby
 Statistics::Mean.of(values)  # => 5.5
+```
+
+### Median
+
+The 50th percentile, by the same linear interpolation:
+
+```ruby
+Statistics::Median.of(values)        # => 5.5
+Statistics::Median.of([1, 2, 3, 4])  # => 2.5
 ```
 
 ### Variance

@@ -8,9 +8,9 @@ module Statistics
     module_function
 
     def of(xs, ys, sample: false)
-      raise ArgumentError, 'Values of x and y must be of equal size' unless xs.size == ys.size
       x_floats = xs.map(&:to_f)
       y_floats = ys.map(&:to_f)
+      raise ArgumentError, 'Values of x and y must be of equal size' unless x_floats.size == y_floats.size
       x_mean = Mean.of(x_floats)
       y_mean = Mean.of(y_floats)
       denominator = sample ? x_floats.size - 1 : x_floats.size
